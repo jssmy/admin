@@ -1,15 +1,19 @@
 <form id="form-user-seach" method="get" action="{{route('user.index')}}">
     @csrf
     <div class="row">
-        <div class="input-field col-md-3 col-sm-3">
+        <div class="input-field col-md-2 col-sm-3">
+            <input type="text" name="document_number">
+            <label for="fn" class="">N° documento</label>
+        </div>
+        <div class="input-field col-md-2 col-sm-3">
           <input type="text" name="user_name">
           <label for="fn" class="">Usuario</label>
         </div>
-        <div class="input-field col-md-3">
+        <div class="input-field col-md-3 col-sm-3">
           <input type="text" name="name">
           <label for="fn" class="" >Nombres</label>
         </div>
-        <div class="input-field col-md-3 col-sm-3">
+        <div class="input-field col-md-2 col-sm-3">
           <select name="state">
             <option value="1">Activo</option>
             <option value="0">Inactivo</option>

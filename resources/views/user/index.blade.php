@@ -60,6 +60,7 @@
             filters: [
                 {field: 'user_name', operator: 'contains', value: $("input[name=user_name]").val()},
                 {field: 'name', operator: 'contains', value:  $("input[name=name]").val()},
+                {field: 'document_number', value: $("input[name=document_number]").val()},
                 {field: 'state', value: $("select[name=state]").val()},
             ]
         };
@@ -76,6 +77,10 @@
     });
     $(".search").trigger('click');
       $('.clean').click(function () {
+        {field: 'user_name', operator: 'contains', value: $("input[name=user_name]").val()},
+        {field: 'name', operator: 'contains', value:  $("input[name=name]").val()},
+        {field: 'document_number', value: $("input[name=document_number]").val()},
+        {field: 'state', value: $("select[name=state]").val()},
       });
 
       $(document).on('click','.add', function () {

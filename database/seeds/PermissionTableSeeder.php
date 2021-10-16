@@ -17,7 +17,7 @@ class PermissionTableSeeder extends Seeder
         //
         $menu_user_main =  Permission::create([
             'name' => 'user.main',
-            'description' => 'MENU USUARIOS',
+            'description' => 'Sistema',
             'icon' => 'radio_button_unchecked',
             'type' => 'menu',
             'state' => 1
