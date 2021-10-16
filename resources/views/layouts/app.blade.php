@@ -5,14 +5,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-  <meta name="description"
-    content="Materialize is a Material Design Admin Template,It&#39;s modern, responsive and based on Material Design by Google.">
-  <meta name="keywords"
-    content="materialize, admin template, dashboard template, flat admin template, responsive admin template, eCommerce dashboard, analytic dashboard">
-  <meta name="author" content="ThemeSelect">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>@yield('title') | APP </title>
   <link rel="apple-touch-icon"
     href="https://pixinvent.com/materialize-material-design-admin-template/app-assets/images/favicon/apple-touch-icon-152x152.png">
@@ -24,12 +17,20 @@
   <!-- BEGIN: Page Level CSS-->
   <link rel="stylesheet" type="text/css" href="{{URL::asset('public/css/materialize.min.css')}}">
   <link rel="stylesheet" type="text/css" href="{{URL::asset('public/css/style.min.css')}}">
-  
+  <link rel="stylesheet" type="text/css" href="{{URL::asset('public/css/bootstrap.min.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{URL::asset('public/css/app-file-manager.min.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{URL::asset('public/plugins/sweet-alert/sweetalert.css')}}">
+
+
   <!-- END: Page Level CSS-->
   <!-- BEGIN: Custom CSS-->
   
   <!-- END: Custom CSS-->
   <style type="text/css">
+
+    .swal-footer {
+      text-align: center;
+    }
     /* Chart.js */
     @keyframes chartjs-render-animation {
       from {
@@ -74,6 +75,16 @@
       height: 200%;
       left: 0;
       top: 0
+    }
+
+    .modal .modal-content {
+      padding: 24px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .error {
+      font-size: 13px;
     }
   </style>
 
@@ -233,7 +244,139 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="{{URL::asset('public/js/vendors.min.js')}}"></script>
   <script src="{{URL::asset('public/js/plugins.min.js')}}"></script>
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <script src="{{URL::asset('public/js/mzbox.min.js')}}"></script>
+
+  <script src="{{URL::asset('public/plugins/jquery-validation/dist/jquery.validate.min.js')}}"></script>
+  <script src="{{URL::asset('public/plugins/jquery-validation/dist/localization/messages_es.js')}}"></script>
+  <script src="{{URL::asset('public/plugins/sweet-alert/sweetalert.min.js')}}"></script>
+
+  <script>
+
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr('content')
+      },
+      error: function (err) {
+
+        if (err.status == 401) {
+          bootbox.dialog({
+            title: 'Alerta',
+            message: "<h4>¡" + err.responseJSON + "!</h4>",
+            buttons: {
+              ok: {
+                label: "ACEPTAR",
+                className: 'btn-info',
+                callback: function () {
+
+                }
+              }
+            }
+          });
+        }
+      }
+    });
+
+    function htmlToElement(html) {
+      var template = document.createElement('template');
+      html = html.trim(); // Never return a text node of whitespace as the result
+      template.innerHTML = html;
+      return template.content.firstChild;
+    }
+    function format_numeric(value) {
+      return /^\d*[.]?\d{0,2}$/.test(value);
+    }
+
+    function format_digits(value) {
+      return /^\d*?$/.test(value);
+    }
+
+    function format_text(value) {
+      return /^[áéíóúñÁÉÍÓÚÑa-zA-Z ]*\s*$/.test(value);
+    }
+
+    function format_digits_sometext(value) {
+      return /^[cCxXkK0-9]*\s*$/.test(value);
+    }
+
+    function format_text_digits(value) {
+      return /^[a-zA-Z0-9-_]*\s*$/.test(value);
+    }
+
+    /* Format input allow
+          ------------------ */
+    (function ($) {
+      $.fn.inputFilter = function (inputFilter) {
+        return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+          if (inputFilter(this.value)) {
+            this.oldValue = this.value;
+            this.oldSelectionStart = this.selectionStart;
+            this.oldSelectionEnd = this.selectionEnd;
+          } else if (this.hasOwnProperty("oldValue")) {
+            this.value = this.oldValue;
+            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+          }
+        });
+      };
+    }(jQuery));
+
+    /*Numeros con decimal*/
+    $(".input-numeric").inputFilter(function (value) {
+      return format_numeric(value);
+    });
+
+    $(".input-document-number").inputFilter(function (value) {
+      return format_numeric(value) && value.length <= 8;
+    });
+
+    /*Numeros sin decimal*/
+    $(".input-digits").inputFilter(function (value) {
+      return format_digits(value);
+    });
+    /*Solo letras*/
+    $(".input-text").inputFilter(function (value) {
+      return format_text(value);
+    });
+
+    /*Solo letras y numeros para código de reclamo*/
+    $(".input-text-digits").inputFilter(function (value) {
+      return format_text_digits(value);
+    });
+
+    /*Solo numeros y algunas letras para nro de servicio y cuentas*/
+    $(".input-digits-sometext").inputFilter(function (value) {
+      return format_digits_sometext(value);
+    });
+
+    /* Jquery Validation extends methods
+       --------------------------------- */
+    jQuery.validator.setDefaults({
+      debug: true
+    });
+
+    jQuery.validator.addMethod("length", function (value, element, params) {
+      return $(element).val().length == params;
+    }, "Por favor, ingresar un valor de {0} de longitud.");
+
+    jQuery.validator.addMethod("alphanumeric", function (value, element) {
+      return this.optional(element) || /^[\w]+$/i.test(value);
+    }, "Por favor, ingresar solo letras y números.");
+
+    jQuery.validator.addMethod("emailCustomize", function (value, element) {
+      return this.optional(element) || /^([a-zA-Z0-9_Ññ.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/i.test(value);
+    }, "Por favor, ingresar una dirección de correo válida.");
+
+    jQuery.validator.addMethod("celular", function (value, element) {
+      return this.optional(element) || /^[9][0-9]{8}$/i.test(value);
+    }, "Por favor, ingresar un número de celular valido de 9 digitos y que empiece con 9.");
+
+    jQuery.validator.addMethod("decimal", function (value, element) {
+      return this.optional(element) || /^\d*[.]?\d{0,2}$/.test(value);
+    }, "Por favor, ingresar un número valido hasta 2 decimales (9.99).");
+
+
+  </script>
   @stack('scripts')
   
 </body>

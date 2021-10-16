@@ -4,7 +4,8 @@
       <tr>
         <th >Usuario</th>
         <th >Nombres</th>
-        <th >Email</th>
+        <th>Usuario creación</th>
+          <th>Fecha creación</th>
         <th >Estado</th>
         <th >Opciones</th>
       </tr>
@@ -14,7 +15,8 @@
         <tr>
             <td >{{$user->user_name}}</td>
             <td >{{$user->name}}</td>
-            <td >{{$user->email}}</td>
+            <td >{{optional($user->user_created)->user_name}}</td>
+            <td>{{\Carbon\Carbon::parse($user->created_at)->format('d/m/Y')}}</td>
             <td >{{$user->stateDescription}}</td>
             <td ></td>
           </tr>

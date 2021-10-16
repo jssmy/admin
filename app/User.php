@@ -15,7 +15,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $guard= ['id'];
+    protected $guarded= ['id'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -39,4 +39,11 @@ class User extends Authenticatable
     {
         return $this->state ? 'Activo' : 'Inactivo';
     }
+
+    public function user_created()
+    {
+        return $this->hasOne(User::class,'user_created_id','id');
+    }
+
+
 }

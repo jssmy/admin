@@ -48,9 +48,10 @@ class PermissionTableSeeder extends Seeder
         ]);
 
         $user = User::create([
-            'name' => 'Joset Manihuari',
+            'document_number'=> '73362261',
             'user_name' => 'jssmy',
-            'email' => 'jssmy@gmail.com',
+            'name' => 'Joset',
+            'last_name' => 'Manihuari Yaricahua',
             'password' => bcrypt('123456')
         ]);
 
@@ -63,3 +64,4 @@ class PermissionTableSeeder extends Seeder
         $user->assignRole([$role->id]);
     }
 }
+
