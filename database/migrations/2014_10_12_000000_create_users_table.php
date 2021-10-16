@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('name',100);
             $table->string('last_name',255);
             $table->boolean('state')->default(1);
-            $table->string('password',20);
+            $table->string('password');
             $table->boolean('require_change_password')->default(1);
             $table->unsignedBigInteger('user_created_id')->nullable();
             $table->rememberToken();

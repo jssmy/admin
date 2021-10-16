@@ -74,7 +74,7 @@
       });
 
     });
-
+    $(".search").trigger('click');
       $('.clean').click(function () {
       });
 
@@ -127,16 +127,16 @@
           url: form.attr('action'),
           type: 'post',
           data: form.serializeArray(),
-          success: function () {
+          success: function (res) {
             swal({
-              title: "Usuario creado",
-              text: "Se ha creado el usuario sin problemas",
+              title: res.message_title,
+              text: res.messsage_description,
               icon: 'success',
               buttons: {
                 ok: 'Aceptar'
               }
             });
-
+            $(".search").trigger('click');
             modal.close();
           },
           error: function (res) {
@@ -157,15 +157,112 @@
       $(document).on('click', '.cancel', function () {
         modal.close();
       });
+
+      $(document).on('keyup', 'input[name=document_number]', function (e) {
+        $("input[name=password]").val($(this).val());
+        if($(this).val()) {
+          $("#label-password").addClass('active');
+        } else  {
+          $("#label-password").removeClass('active');
+        }
+      });
+      $(document).on('click','.edit', function (){
+        var btn = $(this);
+
+        $.ajax({
+          url: btn.data('url'),
+          type:'get',
+          success: function (view) {
+            modal =  mzbox.dialog({
+              dismissible: true,
+              animate: true,
+              size: 'large',
+              title: 'Editar usuario',
+              message: htmlToElement(view),
+              callback: function aa() {
+                return false;
+              }
+            });
+          }
+        });
+
+
+      });
+
+      $(document).on('click','.delete', function (e) {
+          var btn = $(this);
+
+        swal({
+          title: "¿Estás seguro?",
+          text: "Se cambiará de estado al usuario",
+          icon: 'warning',
+          dangerMode: true,
+          buttons: {
+            cancel: 'Cancelar',
+            delete: 'Confirmar'
+          }
+        }).then(function (willDelete) {
+          if(willDelete) {
+            $.ajax({
+              url: btn.data('url'),
+              type: 'delete',
+              success: function (res) {
+                swal({
+                  title: res.message_title,
+                  text: res.messsage_description,
+                  icon: 'success',
+                  buttons: {
+                    ok: 'Aceptar'
+                  }
+                });
+                $('.search').trigger('click');
+              }
+            });
+          }
+        });
+          /*
+
+          */
+
+      });
+
+      $(document).on('click','.reset', function (e) {
+        var btn = $(this);
+
+        swal({
+          title: "¿Estás seguro?",
+          text: "Se reseteará la contraseña del usuario",
+          icon: 'warning',
+          dangerMode: true,
+          buttons: {
+            cancel: 'Cancelar',
+            delete: 'Confirmar'
+          }
+        }).then(function (willDelete) {
+          if(willDelete) {
+            $.ajax({
+              url: btn.data('url'),
+              type: 'post',
+              success: function (res) {
+                swal({
+                  title: res.message_title,
+                  text: res.messsage_description,
+                  icon: 'success',
+                  buttons: {
+                    ok: 'Aceptar'
+                  }
+                });
+              }
+            });
+          }
+        });
+        /*
+
+        */
+
+      });
     });
 
-    $(document).on('keyup', 'input[name=document_number]', function (e) {
-      $("input[name=password]").val($(this).val());
-      if($(this).val()) {
-        $("#label-password").addClass('active');
-      } else  {
-        $("#label-password").removeClass('active');
-      }
-    });
+
   </script>
 @endpush

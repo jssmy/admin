@@ -42,7 +42,7 @@ class User extends Authenticatable
 
     public function user_created()
     {
-        return $this->hasOne(User::class,'user_created_id','id');
+        return $this->hasOne(User::class,'id','user_created_id');
     }
 
 

@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserStoreRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,10 +26,20 @@ class UserStoreRequest extends FormRequest
     {
         return [
             'document_number'=>'required|numeric',
-            'user_name' => 'required|max:8|string|unique:users',
             'name' => 'required|string|max:50',
             'last_name'=>'required|string|max:50',
-            'password'=>'required|string|max:20'
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function($validator) {
+            $user_find = User::where('user_name', $this->user_name)->where('id','!=',$this->user->id)->first();
+            if ($user_find) {
+                return $validator->errors()->add('user_name', str_replace(':attribute','user_name',trans('validation.unique')));
+            }
+        });
+
+        return $validator;
     }
 }
